@@ -55,7 +55,7 @@ if __name__ == "__main__":
         print("Target path is not valid: {}".format(TARGET_PATH))
         exit(1)
 
-    with open(MODEL_FILE, 'r') as f:
+    with open(MODEL_FILE, 'r', encoding='utf8') as f:
         model = json.load(f)
 
     modelSet = {item['name']: item['id'] for item in model['collection']['categorySet']}
