@@ -97,6 +97,9 @@ if __name__ == "__main__":
                     ))
                     exit(1)
 
+                # Update collection
+                src_json['collection'] = model['collection']
+
             with open(os.path.join(TARGET_PATH, src_name), 'w', encoding='utf8') as writer:
                 json.dump(src_json, writer, ensure_ascii=False)
 
