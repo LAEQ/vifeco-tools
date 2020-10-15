@@ -1,4 +1,13 @@
-# Tool to reconcile category ids between different vifeco db
+## Compare two json files from vifeco
+
+Compare two feature counts from vifeco
+```bash
+python matcher.py --help
+
+python matcher.py --file1=file1.json --file2=file_2.json
+```
+
+## Reconcile category ids between different vifeco db
 
 ### Arguments:
 | name | desc | default value |

@@ -8,29 +8,34 @@ class Display:
     def __init__(self, categories, video_ids, datas):
         self.categories = categories
         self.video_ids = video_ids
-        self.i = int(len(self.categories) / 2)
-        self.j = int(len(self.categories) / self.i) + 1
-
         self.datas = self.parse_data(datas)
 
         index, jndex = self.plot_indexes()
 
-        fig, axs = plt.subplots(index, jndex)
+        fig, axs = plt.subplots(index, jndex, squeeze=False)
+        plt.title('video name')
+
+        print(index, jndex)
 
         x = 0
         y = 0
 
         for cat, values in self.datas:
+            print('cat')
             totals = np.array([self.total(item) for item in values])
             both = totals[:, 0]
             file_1 = totals[:, 1]
             file_2 = totals[:, 2]
 
             ind = [x for x, _ in enumerate(totals)]
+
             axs[x, y].bar(ind, both, width=0.8, label='both', color='gold', bottom=file_1+file_2)
             axs[x, y].bar(ind, file_1, width=0.8, label='file_1', color='silver', bottom=file_2)
             axs[x, y].bar(ind, file_2, width=0.8, label='file_2', color='#CD853F')
+            axs[x, y].set_title(cat['name'], fontsize=10)
 
+            axs[x, y].legend(loc="upper right")
+            #
             y += 1
             if y >= jndex:
                 y = 0
