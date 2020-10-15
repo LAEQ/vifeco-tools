@@ -39,15 +39,24 @@ class TestGraph(TestCase):
 
         self.assertEqual(len(graph.graph), 6)
 
-    def test_tarjan(self):
+    def test_tarjan_1(self):
         graph = Graph(self.get_pts_1(), self.get_pts_2())
         tj = graph.tj
 
         self.assertEqual(len(tj), 1)
         self.assertEqual(len(tj[0]), 6)
 
-    def test_tarjan(self):
+    def test_tarjan_2(self):
         graph = Graph(self.get_pts_1(), self.get_pts_2(), delta=100)
         result = [len(l) for l in graph.tj]
 
         self.assertListEqual([2, 2, 2], result)
+
+        groups = graph.plot()
+        print(groups)
+
+    def test_plot(self):
+        graph = Graph(self.get_pts_1(), self.get_pts_2())
+        plot = graph.plot()
+
+        print(plot)

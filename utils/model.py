@@ -1,7 +1,7 @@
 from uuid import uuid4
 from typing import List
 from tarjan import tarjan
-
+import numpy as np
 
 class Point:
     def __init__(self, args):
@@ -17,7 +17,7 @@ class Point:
         return False
 
     def __repr__(self):
-        return "{%s: %s}" % (self.uuid, self.start)
+        return "{%s: %s}" % (self.catgory_id, self.start)
 
 
 class Graph:
@@ -43,3 +43,17 @@ class Graph:
                     self.graph[pt2.uuid].append(pt1.uuid)
 
         self.tj = tarjan(self.graph)
+
+    def plot(self):
+        pts = self.pts_1 + self.pts_2
+
+        result = []
+
+        for l in self.tj:
+            tmp = []
+            for uid in l:
+                tmp.append(next(pt for pt in pts if pt.uuid == uid))
+
+            result.append(tmp)
+
+        return result
