@@ -1,7 +1,8 @@
 from uuid import uuid4
-from typing import List
+from typing import List, OrderedDict
 from tarjan import tarjan
-import numpy as np
+import collections
+
 
 class Point:
     def __init__(self, args):
@@ -20,13 +21,39 @@ class Point:
         return "{%s: %s}" % (self.catgory_id, self.start)
 
 
+class Video:
+    def __init__(self, json):
+        self.json = json
+        self.catDict = {k['id']: k['name'] for k in self.json['collection']['categorySet']}
+
+    def name(self):
+        return self.json['path']
+
+    def points(self) -> List[Point]:
+        return [Point(params) for params in self.json['pointSet']]
+
+    def category(self, identifier: int) -> str:
+        return self.catDict[identifier]
+
+    def totals(self) -> OrderedDict:
+        result = {k['id']: 0 for k in self.json['collection']['categorySet']}
+
+        for point in self.points():
+            result[point.catgory_id] += 1
+
+        return collections.OrderedDict(sorted(result.items()))
+
+    def id(self):
+        return self.json['uuid']
+
 class Graph:
     """
     Graph of points
     """
-    def __init__(self, pts_1: List[Point], pts_2: List[Point], delta=5000):
-        self.pts_1 = pts_1
-        self.pts_2 = pts_2
+
+    def __init__(self, video1: Video, video2: Video, delta=5000):
+        self.pts_1 = video1.points()
+        self.pts_2 = video2.points()
         self.delta = delta
 
         self.graph = {p.uuid: [] for p in self.pts_1}
@@ -43,8 +70,9 @@ class Graph:
                     self.graph[pt2.uuid].append(pt1.uuid)
 
         self.tj = tarjan(self.graph)
+        self.tj_pts = self.tj_to_points()
 
-    def plot(self):
+    def tj_to_points(self):
         pts = self.pts_1 + self.pts_2
 
         result = []
@@ -57,3 +85,9 @@ class Graph:
             result.append(tmp)
 
         return result
+
+    def tj_by_category(self, catId: int):
+        filter_list = list(filter(lambda d: d[0].catgory_id == catId, self.tj_to_points()))
+        filter_list.sort(key=lambda x: x[0].start)
+
+        return filter_list

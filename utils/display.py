@@ -21,7 +21,6 @@ class Display:
         y = 0
 
         for cat, values in self.datas:
-            print('cat')
             totals = np.array([self.total(item) for item in values])
             both = totals[:, 0]
             file_1 = totals[:, 1]
