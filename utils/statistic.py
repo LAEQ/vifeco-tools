@@ -1,3 +1,4 @@
+import numpy as np
 from utils.model import Graph, Video
 from datetime import timedelta
 
@@ -6,11 +7,12 @@ class Statistic:
     """
     Display result from 2 couting files from vifeco
     """
-    def __init__(self, video1: Video, video2: Video):
+
+    def __init__(self, video1: Video, video2: Video, delta: int):
         self.video1 = video1
         self.video2 = video2
         self.video_ids = [self.video1.id(), self.video2.id()]
-        self.graph = Graph(video1, video2)
+        self.graph = Graph(video1, video2, delta)
 
     def summary(self):
         """
@@ -32,24 +34,41 @@ class Statistic:
             id = row[0]
             row.insert(1, self.video1.catDict[id].strip())
 
-        columns = ("id", "Name", "File 1", "File 2")
-        output = ['{:>20}'.format(item) for item in columns]
+        columns = ("id", "Name", "File 1", "Concordance 1 (%)", "File 2", "Concordance 2 (%)")
+        output = ['{:>30}'.format(item) for item in columns]
         print("|".join(output))
 
         for row in data:
-            output = ['{:20}'.format(row[0]), '{:20.20}'.format(row[1]), '{:>20}'.format(row[2]),
-                      '{:>20}'.format(row[3])]
+            #
+            output = ['{:30}'.format(row[0]),
+                      '{:30.30}'.format(row[1]),
+                      '{:>30}'.format(row[2]),
+                      '{:>30}'.format(row[3])
+                      ]
+
+            conc = self.concordance(row[0])
+            output.insert(3, '{:>30}'.format(str('{:04.2f}'.format(conc[0]))))
+            output.insert(5, '{:>30}'.format('{:04.2f}'.format(conc[1])))
 
             print("|".join(output))
 
-        # Matplot lib version to de continue.
-        # fig = plt.figure(dpi=80)
-        # ax = fig.add_subplot(1, 1, 1)
-        # table = ax.table(cellText=data, loc='center', colLabels=columns)
-        # table.auto_set_font_size(False)
-        # table.set_fontsize(12)
-        # ax.axis('off')
-        # plt.show()
+    def concordance(self, cat_id: int):
+        tj_cat = self.graph.tj_by_category(cat_id)
+
+        if len(tj_cat) == 0:
+            return [100, 100]
+
+        result = np.array([self.parse(item) for item in tj_cat])
+        sum = result.sum(axis=0)
+        result = [100, 100]
+
+        if sum[1] != 0:
+            result[0] = (sum[0] / (sum[1] + sum[0])) * 100
+
+        if sum[2] != 0:
+            result[1] = (sum[0] / (sum[2] + sum[0])) * 100
+
+        return result
 
     def parse(self, items):
         tmp = {id: 0 for id in self.video_ids}

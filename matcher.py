@@ -20,6 +20,7 @@ args = vars(parser.parse_args())
 
 file1 = args['file1']
 file2 = args['file2']
+delta = args['delta']
 
 
 def files_not_valid(f1, f2):
@@ -74,7 +75,7 @@ if __name__ == '__main__':
     videoIds = [json_1['uuid'], json_2['uuid']]
 
     video1 = Video(json_1)
-    stat = Statistic(video1, Video(json_2))
+    stat = Statistic(video1, Video(json_2), delta)
 
     while True:
         choice = menu()
