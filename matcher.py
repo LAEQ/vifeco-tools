@@ -1,20 +1,16 @@
 import argparse
 import os
-import json
-from matplotlib import pyplot as plt
-import numpy as np
 
-from utils.display import Display
-from utils.model import Point, Graph, Video
-from utils.reconcile import parseFile, parseJsonFile, getCategorySet
+from utils.model import Video
+from utils.reconcile import parseFile, parseJsonFile
 
 # Arguments
 from utils.statistic import Statistic
 
 parser = argparse.ArgumentParser(description='Match counter video features')
-parser.add_argument("--file1", "-f1", required=True, help="vifeco json files")
-parser.add_argument("--file2", "-f2", required=True, help="vifeco json files")
-parser.add_argument("--delta", "-d", default=5, help="Default delta time in seconds")
+parser.add_argument("--file1", "-f1", type=str, required=True, help="vifeco json files")
+parser.add_argument("--file2", "-f2", type=str, required=True, help="vifeco json files")
+parser.add_argument("--delta", "-d", type=int, default=5000, help="Default delta time in milliseconds")
 
 args = vars(parser.parse_args())
 
@@ -28,6 +24,10 @@ def files_not_valid(f1, f2):
 
 
 def menu():
+    if file1 == file2:
+        print("It is useless to compare the same files. They match at 100%")
+        exit(0)
+
     print("Select an operation or quit.")
     print("1. Show all")
     print("2. Show one category")

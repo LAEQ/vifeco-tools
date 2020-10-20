@@ -2,7 +2,7 @@ from uuid import uuid4
 from typing import List, OrderedDict
 from tarjan import tarjan
 import collections
-
+from datetime import timedelta
 
 class Point:
     def __init__(self, args):
@@ -11,14 +11,19 @@ class Point:
         self.videoId = args['videoId']
         self.uuid = uuid4()
 
-    def match(self, other, delta=5000):
+    def match(self, other, delta):
         if isinstance(other, Point):
             return self.catgory_id == other.catgory_id and abs(self.start - other.start) <= delta
 
         return False
 
     def __repr__(self):
-        return "{%s: %s}" % (self.catgory_id, self.start)
+        start = timedelta(milliseconds=self.start)
+        start = str(start).split(".")[0]
+
+        start = '{:10s}'.format(start)
+
+        return "{%s:%s:%s}" % (self.catgory_id, self.videoId[0:5], start)
 
 
 class Video:

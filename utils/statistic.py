@@ -39,7 +39,6 @@ class Statistic:
         print("|".join(output))
 
         for row in data:
-            #
             output = ['{:30}'.format(row[0]),
                       '{:30.30}'.format(row[1]),
                       '{:>30}'.format(row[2]),
