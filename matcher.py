@@ -6,6 +6,7 @@ from utils.reconcile import parseFile, parseJsonFile
 
 # Arguments
 from utils.statistic import Statistic
+from utils.tools import files_not_valid
 
 parser = argparse.ArgumentParser(description='Match counter video features')
 parser.add_argument("--file1", "-f1", type=str, required=True, help="vifeco json files")
@@ -17,10 +18,6 @@ args = vars(parser.parse_args())
 file1 = args['file1']
 file2 = args['file2']
 delta = args['delta']
-
-
-def files_not_valid(f1, f2):
-    return (os.path.exists(f1) and os.path.exists(f2)) is False
 
 
 def menu():

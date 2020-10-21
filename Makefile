@@ -14,3 +14,5 @@ reconcile:
 	python reconcile.py
 reconcile_fixed:
 	python reconcile.py --model=model_fixed.json
+matcher_report:
+	python matcher_report.py --folder1=report/jode --folder2=report/orane
