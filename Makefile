@@ -16,3 +16,5 @@ reconcile_fixed:
 	python reconcile.py --model=model_fixed.json
 matcher_report:
 	python matcher_report.py --folder1=report/jode --folder2=report/orane
+migrate_db:
+	python migrate_db.py --database=vifecodb.db

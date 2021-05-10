@@ -2,6 +2,10 @@ import os
 import re
 
 
+def file_not_valid(f1):
+    return os.path.exists(f1) is False
+
+
 def files_not_valid(f1, f2):
     return (os.path.exists(f1) and os.path.exists(f2)) is False
 
