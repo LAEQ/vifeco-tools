@@ -31,7 +31,7 @@ python reconcile.py --model=my_model_file.json source="C:\Users\David\Documents\
 ### Database migration
 
 ```bash
-python migration_db.py --help
+python migrate_db.py --help
 
 # db file target/vifecodb.mv.db
 ```
