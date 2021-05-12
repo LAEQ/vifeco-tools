@@ -40,6 +40,7 @@ def clear_target(connection):
     cursor.execute("DELETE FROM COLLECTION")
     cursor.execute("DELETE FROM CATEGORY")
     cursor.execute("DELETE FROM USER")
+    cursor.close()
 
 
 def create_target_db():
@@ -47,6 +48,10 @@ def create_target_db():
     target_dir = os.path.join(cur_dir, "target")
     template_file = os.path.abspath(os.path.join(cur_dir, "db", "vifeco.mv.db"))
     template_copy = os.path.abspath(os.path.join(target_dir, "vifeco.mv.db"))
+
+    if os.path.exists(template_copy):
+        os.remove(template_copy)
+
     shutil.copyfile(template_file, template_copy)
 
 
@@ -63,6 +68,7 @@ def insert_user(cursor, data):
 
     query = "INSERT INTO user (ID, FIRSTNAME, LASTNAME, ISDEFAULT) VALUES (?,?,?,?)"
     cursor.execute(query, data)
+    cursor.close()
 
 
 def read_category(cursor):
@@ -76,6 +82,7 @@ def read_category(cursor):
 def insert_category(cursor, data):
     query = "INSERT INTO category (ID, NAME, ICON, COLOR, SHORTCUT) VALUES (?,?,?,?,?)"
     cursor.execute(query, data)
+    cursor.close()
 
 
 def read_collection(cursor):
@@ -89,6 +96,7 @@ def read_collection(cursor):
 def insert_collection(cursor, data):
     query = "INSERT INTO collection (ID, NAME, ISDEFAULT) VALUES (?,?,?)"
     cursor.execute(query, data)
+    cursor.close()
 
 
 def read_category_collection(cursor):
@@ -102,6 +110,7 @@ def read_category_collection(cursor):
 def insert_category_collection(cursor, data):
     query = "INSERT INTO collection_category (COLLECTION_ID, CATEGORY_ID) VALUES (?,?)"
     cursor.execute(query, data)
+    cursor.close()
 
 
 def read_video(cursor):
@@ -118,6 +127,7 @@ def insert_video(cursor, data):
     data = (result[1], data[1], data[2], data[3], data[4], timestamp)
     query = "INSERT INTO video (ID, PATH, DURATION, USER_ID, COLLECTION_ID, CREATEDAT) VALUES (?,?,?,?,?,?)"
     cursor.execute(query, data)
+    cursor.close()
 
     return result
 
@@ -133,12 +143,21 @@ def read_point(cursor):
 def insert_point(cursor, data):
     query = "INSERT INTO POINT (ID, X, Y, CATEGORY_ID, VIDEO_ID, START) VALUES (?,?,?,?,?,?)"
     cursor.execute(query, data)
+    cursor.close()
 
 
 def count_point(cursor, identifier):
     query = "SELECT count(id), category_id from point where " \
-            "video_id={} group by category_id".format(identifier)
-    return cursor.execute(query).fetchone()
+            "video_id=(?) group by category_id"
+    return cursor.execute(query, (identifier,)).fetchall()
+
+
+def fetch_points(cursor):
+    cursor.execute("select count(*), video_id from POINT group by video_id")
+    result = cursor.fetchall()
+    cursor.close()
+
+    return result
 
 
 if __name__ == '__main__':
@@ -151,6 +170,7 @@ if __name__ == '__main__':
 
     # Clear tables
     conn_h2db = connect_h2db()
+
     clear_target(conn_h2db)
 
     conn_sqlite = connect_sqlite(db_sqlite)
@@ -176,10 +196,9 @@ if __name__ == '__main__':
         data = (uuid.uuid4().hex, row[1], row[2], row[4], video_id[1], row[5])
         insert_point(conn_h2db.cursor(), data)
 
+    original = (fetch_points(conn_sqlite.cursor()))
+    migrate = (fetch_points(conn_h2db.cursor()))
 
-    # Validation
-    for ids in video_ids:
-        print(ids[0])
-        original = count_point(conn_sqlite.cursor(), ids[0])
-        print(original)
-        # migrate = count_point(conn_h2db.cursor(), ids[1])
+    if len(original) != len(migrate):
+        print("Migration failed")
+        exit(1)

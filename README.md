@@ -33,5 +33,5 @@ python reconcile.py --model=my_model_file.json source="C:\Users\David\Documents\
 ```bash
 python migrate_db.py --help
 
-# db file target/vifecodb.mv.db
+# Result H2 db file for v3: target/vifecodb.mv.db (to be copied to ~/vifeco/db)
 ```
